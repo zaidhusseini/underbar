@@ -56,6 +56,17 @@
   // Note: _.each does not have a return value, but rather simply runs the
   // iterator function over each item in the input collection.
   _.each = function(collection, iterator) {
+    if (Array.isArray(collection)) {
+      for (var i=0; i<collection.length; i++){
+        iterator(collection[i],i,collection);
+      }
+    } else {
+
+      for (var key in collection){
+        iterator(collection[key], key, collection);
+      }
+    }
+
   };
 
   // Returns the index at which value can be found in the array, or -1 if value
@@ -77,16 +88,87 @@
 
   // Return all elements of an array that pass a truth test.
   _.filter = function(collection, test) {
+    var answer = [];
+
+    _.each(collection, function (element) {
+      if (test(element)) {
+        answer.push(element);
+      }
+    });
+   
+   return answer;
+  
   };
 
   // Return all elements of an array that don't pass a truth test.
   _.reject = function(collection, test) {
     // TIP: see if you can re-use _.filter() here, without simply
     // copying code in and modifying it
+    var passed = _.filter(collection,test);
+    var rejected = [];
+
+    _.each(collection, function(element, index){
+      if (_.indexOf(passed,element) === -1){
+        rejected.push(element);
+      }
+    });
+
+    return rejected;
+
   };
 
   // Produce a duplicate-free version of the array.
   _.uniq = function(array, isSorted, iterator) {
+    // 1) Check if iterator present
+    // 2) If no iterator func, add array to set
+    // 3) Call forEach through set and add to array to get unique elements
+    // 4) return unique Array
+    // 5) If iterator present, run iterator on each element and return a boolean in array
+    // 6) Place Boolean array in Set to obtain unique values and convert to array
+    // 7) Cycle through unique boolean array and apply iterator to transpose back array values
+
+    function makeUnique(array){
+      var answer = [];
+      var mySet = new Set(array); // made elements unique by adding to set
+      mySet.forEach(function(element){
+        answer.push(element);
+      });
+
+      return answer; // return unique array
+    } 
+
+    //check if iterator present based on # of args passed
+    if (arguments.length < 3){
+      return makeUnique(array);
+
+    } else {
+        
+        var boolArray = [];
+        _.each(array,function(element){
+          if (iterator(element)){
+            boolArray.push(true);
+          }
+          else {
+            boolArray.push(false);
+          }
+        
+        });
+
+        var uniqueBoolArray = makeUnique(boolArray);
+        var uniqueIteratedArray = [];
+        var index = 0;
+        _.each(array,function(element){
+          if (uniqueBoolArray[index] === iterator(element)) {
+             uniqueIteratedArray.push(element);
+             index++;
+          }
+        });
+        
+        return uniqueIteratedArray;
+
+      
+      }
+
   };
 
 
