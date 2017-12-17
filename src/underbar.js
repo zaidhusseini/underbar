@@ -224,6 +224,23 @@
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
   _.reduce = function(collection, iterator, accumulator) {
+  // 1) Check if accumulator exists or not
+  // 2) If accumaltor exists, cycle through collection applying iterator on each element and passing new accumaltor value for each call
+  // 3) If not accumulator, set accumalotr to equal first element of collect and use a sliced version of collection that excludes first element
+    var total = 0
+    var newArray = collection.slice();
+
+    if (arguments[2] === undefined){
+      accumulator = collection[0];
+      newArray = collection.slice(1);
+    } 
+
+    _.each(newArray,function(element){
+      accumulator = iterator(accumulator, element);
+    }); 
+   
+    return accumulator;
+
   };
 
   // Determine if the array or object contains a given value (using `===`).
