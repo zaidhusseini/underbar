@@ -328,7 +328,7 @@
     // 1) Cycle through each of the arguments provided
     // 2) For each argument object, add each key to curren object
 
-    for (var i=1; i<arguments.length; i++){
+    for (var i=0; i<arguments.length; i++){
       _.each(arguments[i], function(value,key){
         obj[key] = value;
       });
@@ -339,7 +339,17 @@
   // Like extend, but doesn't ever overwrite a key that already
   // exists in obj
   _.defaults = function(obj) {
+
+    for (var i=0; i<arguments.length; i++){
+      _.each(arguments[i], function(value,key){
+        if (!obj.hasOwnProperty(key)) {
+          obj[key] = value;
+        }
+      });
+    }
+    return obj;
   };
+
 
 
   /**
