@@ -223,19 +223,35 @@
   //     return total + number * number;
   //   }); // should be 5, regardless of the iterator function passed in
   //          No accumulator is given so the first element is used.
+  
   _.reduce = function(collection, iterator, accumulator) {
   // 1) Check if accumulator exists or not
   // 2) If accumaltor exists, cycle through collection applying iterator on each element and passing new accumaltor value for each call
   // 3) If not accumulator, set accumalotr to equal first element of collect and use a sliced version of collection that excludes first element
     var total = 0
-    var newArray = collection.slice();
+    var newCollection = Array.isArray(collection) ? collection.slice(): Object.assign({}, collection);
+    //check if array and if no accum value passed, update new array copy
+    if (Array.isArray(collection)){
+      if (arguments[2] === undefined){
+        accumulator = collection[0];
+        newCollection = collection.slice(1);
+      } 
+    } else {
+      //check if object and no accum value passed, capture first value and remove first key
+      if (arguments[2] === undefined){
+        var doOnce = true;
+        for (var keys in newCollection){
+          if (doOnce) { 
+            var firstKey = keys;
+            doOnce = false;
+            accumulator = collection[firstKey];
+          }
+        }
+        delete newCollection[firstKey];
+      } 
+    }
 
-    if (arguments[2] === undefined){
-      accumulator = collection[0];
-      newArray = collection.slice(1);
-    } 
-
-    _.each(newArray,function(element){
+    _.each(newCollection,function(element){
       accumulator = iterator(accumulator, element);
     }); 
    
