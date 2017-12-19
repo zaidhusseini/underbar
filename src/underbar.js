@@ -453,6 +453,32 @@
   // input array. For a tip on how to make a copy of an array, see:
   // http://mdn.io/Array.prototype.slice
   _.shuffle = function(array) {
+    // 1) Cycle throug each element of the array provided 
+    // 2) For current index in array cycle, generate a random index num between 0 & array length that does NOT equal current index
+    // 3) Swap the randomly generated index number with current index
+    
+    var randomArray = array.slice();
+    var randomIndex;
+
+    function swap(currentIndex,randomIndex){
+      var temp = randomArray[currentIndex];
+      randomArray[currentIndex] = randomArray[randomIndex];
+      randomArray[randomIndex] = temp;
+    }
+
+    function getRandomIntInclusive(min, max) {
+      min = Math.ceil(min);
+      max = Math.floor(max);
+      return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive 
+    }
+
+    _.each(randomArray, function(element, currentIndex){
+      randomIndex = getRandomIntInclusive(0, randomArray.length-1);
+      swap(currentIndex, randomIndex);
+    });
+
+    return randomArray;
+
   };
 
 
