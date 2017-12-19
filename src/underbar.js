@@ -392,6 +392,37 @@
   // already computed the result for the given argument and return that value
   // instead if possible.
   _.memoize = function(func) {
+    //1) For each run create an execution context that stores an array of priorly executed arguments e.g., [{result: value, args: [0,1,2,3,4]}, {result: value2, args: [2.3.4.5]}, etc]
+    //2) If the function is invoked, check if array of same arguments exists in results array
+    //3) If it exists, return old value (e.g., Object of array anmd computed values), otherwise run function with arguments
+    //4) Finally, store arguments list and result in results array for future iterations
+    
+    var results = [];
+
+    return function(){
+      
+      var found = false;
+      var location;
+      var answer;
+      var currentFuncCallArguments = arguments;
+
+      _.each(results, function(element, index){
+        if (JSON.stringify(currentFuncCallArguments) === JSON.stringify(results[index].args)){
+          found = true;
+          location = index;
+          answer = results.result; //return stored result
+        }
+      });
+      
+      if (!found) {
+        answer = func.apply(this,arguments);
+        results.push({result:answer, args:arguments});
+      }
+
+      return answer;
+
+    };
+
   };
 
   // Delays a function for the given number of milliseconds, and then calls
