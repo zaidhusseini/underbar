@@ -402,14 +402,12 @@
     return function(){
       
       var found = false;
-      var location;
       var answer;
       var currentFuncCallArguments = arguments;
 
       _.each(results, function(element, index){
         if (JSON.stringify(currentFuncCallArguments) === JSON.stringify(results[index].args)){
           found = true;
-          location = index;
           answer = results.result; //return stored result
         }
       });
